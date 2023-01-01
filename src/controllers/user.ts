@@ -1,38 +1,72 @@
 import User from "../models/user";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { NotFoundError } from "../errors/notFoundError";
+import { InCorrectDataError } from "../errors/incorrectDataError";
 
 const params = {
   new: true,
   runValidators: true,
 };
 
-export const getUsers = (req: Request, res: Response) => {
+export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   User.find({})
-    .then((users) => res.send({ allUsers: users }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .then((users) => res.send(users))
+    .catch(next);
 };
 
-export const getUser = (req: Request, res: Response) => {
+export const getUser = (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.send(user))
-    .catch(() => res.status(404).send({ message: "Пользователь не найден" }));
+    .then((user) => {
+      if (!user) throw new NotFoundError("Нет пользователя с таким ID");
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.statusCode) next(err);
+      next(new NotFoundError("Нет пользователя с таким ID"));
+    });
 };
 
-export const createUser = (req: Request, res: Response) => {
+export const createUser = (req: Request, res: Response, next: NextFunction) => {
   User.create(req.body)
-    .then((user) => res.send(user))
-    .catch((err) => res.status(400).send(err));
+    .then((user) => {
+      if (!user) throw new InCorrectDataError();
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.statusCode) next(err);
+      next(new InCorrectDataError());
+    });
 };
 
-export const updateProfile = (req: Request, res: Response) => {
+export const updateProfile = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   User.findByIdAndUpdate(req.user?._id, req.body, params)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Пользователь не найден" }));
+    .then((user) => {
+      if (!user||!(("name" in req.body)&&("about" in req.body))) throw new InCorrectDataError();
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.statusCode) next(err);
+      next(new InCorrectDataError());
+    });
 };
 
-export const updateAvatar = (req: Request, res: Response) => {
+export const updateAvatar = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   User.findByIdAndUpdate(req.user?._id, req.body, params)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Пользователь не найден" }));
+    .then((user) => {
+      if (!user|| !("avatar" in req.body)) throw new InCorrectDataError();
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.statusCode) next(err);
+      next(new InCorrectDataError());
+    });
 };

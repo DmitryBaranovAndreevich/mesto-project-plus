@@ -3,15 +3,8 @@ import mongoose from 'mongoose';
 import { Request, Response, NextFunction } from "express";
 import userRouter from './routes/user';
 import cardRouter from './routes/card';
+import { errorHandler } from './helpers/errorHandler';
 const { PORT = 3000 } = process.env;
-
-declare namespace Express {
-  interface Request {
-    user: {
-      _id: string;
-    };
-  }
-};
 
 const app = express();
 app.use(express.json());
@@ -26,6 +19,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use("/users", userRouter);
 app.use("/cards", cardRouter);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`)
