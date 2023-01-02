@@ -4,6 +4,8 @@ import { Request, Response, NextFunction } from "express";
 import userRouter from './routes/user';
 import cardRouter from './routes/card';
 import { errorHandler } from './helpers/errorHandler';
+import { limiter } from './middlewares/apiLimiter';
+import helmet from "helmet";
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -16,7 +18,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   next();
 });
-
+app.use(limiter);
+app.use(helmet());
 app.use("/users", userRouter);
 app.use("/cards", cardRouter);
 

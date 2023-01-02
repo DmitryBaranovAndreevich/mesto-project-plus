@@ -17,25 +17,22 @@ export const getUsers = (req: Request, res: Response, next: NextFunction) => {
 export const getUser = (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => {
-      if (!user) throw new NotFoundError("Нет пользователя с таким ID");
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.statusCode) next(err);
-      next(new NotFoundError("Нет пользователя с таким ID"));
-    });
+    .orFail(new NotFoundError("Нет пользователя с таким ID"))
+    .then((user) => res.send(user))
+    .catch(next);
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
+  if (!("avatar" in req.body && "name" in req.body && "about" in req.body))
+    throw new InCorrectDataError();
   User.create(req.body)
     .then((user) => {
-      if (!user) throw new InCorrectDataError();
+      if (!user) throw new Error("NotValidData");
       res.send(user);
     })
     .catch((err) => {
-      if (err.statusCode) next(err);
-      next(new InCorrectDataError());
+      if (err.message === "NotValidData") next(new InCorrectDataError());
+      else next(new Error());
     });
 };
 
@@ -45,13 +42,15 @@ export const updateProfile = (
   next: NextFunction
 ) => {
   User.findByIdAndUpdate(req.user?._id, req.body, params)
+    .orFail(new NotFoundError("Нет пользователя с таким ID"))
     .then((user) => {
-      if (!user||!(("name" in req.body)&&("about" in req.body))) throw new InCorrectDataError();
+      if (!("name" in req.body && "about" in req.body))
+        throw new InCorrectDataError();
       res.send(user);
     })
     .catch((err) => {
       if (err.statusCode) next(err);
-      next(new InCorrectDataError());
+      else next(err);
     });
 };
 
@@ -61,12 +60,13 @@ export const updateAvatar = (
   next: NextFunction
 ) => {
   User.findByIdAndUpdate(req.user?._id, req.body, params)
+    .orFail(new NotFoundError("Нет пользователя с таким ID"))
     .then((user) => {
-      if (!user|| !("avatar" in req.body)) throw new InCorrectDataError();
+      if (!("avatar" in req.body)) throw new InCorrectDataError();
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.statusCode) next(err);
-      next(new InCorrectDataError());
+      else next(err);
     });
 };
