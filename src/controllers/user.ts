@@ -48,10 +48,7 @@ export const updateProfile = (
         throw new InCorrectDataError();
       res.send(user);
     })
-    .catch((err) => {
-      if (err.statusCode) next(err);
-      else next(err);
-    });
+    .catch(next);
 };
 
 export const updateAvatar = (
@@ -65,8 +62,5 @@ export const updateAvatar = (
       if (!("avatar" in req.body)) throw new InCorrectDataError();
       res.send({ data: user });
     })
-    .catch((err) => {
-      if (err.statusCode) next(err);
-      else next(err);
-    });
+    .catch(next);
 };
