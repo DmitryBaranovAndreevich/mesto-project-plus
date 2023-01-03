@@ -1,5 +1,6 @@
 import { IUser } from "../interface/user";
 import {Schema, model} from "mongoose";
+import validator from "validator";
 
 const userShema = new Schema({
   name: {
@@ -16,7 +17,10 @@ const userShema = new Schema({
   },
   avatar: {
     type: String,
-    required: true,
+    validate: {
+      validator:(v: string) => validator.isURL(v),
+      message: "Некорректный URL"
+    }
   }
 })
 
