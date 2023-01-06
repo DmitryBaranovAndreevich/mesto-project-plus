@@ -1,5 +1,5 @@
 import { ICard } from "../interface/card";
-import {Schema, model} from "mongoose";
+import { Schema, model } from "mongoose";
 import validator from "validator";
 
 const cardShema = new Schema({
@@ -11,25 +11,28 @@ const cardShema = new Schema({
   },
   link: {
     type: String,
-     validate: {
-      validator:(v: string) => validator.isURL(v),
-      message: "Некорректный URL"
-    }
+    validate: {
+      validator: (v: string) => validator.isURL(v),
+      message: "Некорректный URL",
+    },
+    required: true,
   },
   owner: {
     type: Schema.Types.ObjectId,
-    ref: 'user',
-    required: true
+    ref: "user",
+    required: true,
   },
-  likes: [{
-    type: Schema.Types.ObjectId,
-    ref: 'user',
-    default: []
-  }],
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      default: [],
+    },
+  ],
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 export default model<ICard>("card", cardShema);

@@ -6,6 +6,7 @@ import { NotFoundError } from "../errors/notFoundError";
 import { InCorrectDataError } from "../errors/incorrectDataError";
 import { IUser } from "../interface/user";
 import { InCorrectPassword } from "../errors/incorrectPassword";
+import { EmailDuplicate } from "../errors/emailDuplicate";
 
 const params = {
   new: true,
@@ -19,7 +20,6 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     .orFail(new NotFoundError("Нет пользователя с таким email"))
     .then((user) =>
       bcrypt.compare(password, user.password).then((matched) => {
-        console.log(matched);
         if (!matched) throw new InCorrectPassword();
         const token = jwt.sign({ _id: user._id }, "some-secret-key", {
           expiresIn: "7d",
@@ -72,7 +72,8 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
       if (!user) throw new Error("NotValidData");
       res.send(user);
     })
-    .catch((err: Error) => {
+    .catch((err: { message: string; code: number }) => {
+      if (err.code === 11000) next(new EmailDuplicate());
       if (err.message === "NotValidData") next(new InCorrectDataError());
       else next(new Error());
     });

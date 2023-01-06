@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { requestLogger, errorLogger } from './middlewares/logger';
+import { requestLogger, errorLogger } from "./middlewares/logger";
 import userRouter from "./routes/user";
 import cardRouter from "./routes/card";
 import { errorHandler } from "./helpers/errorHandler";
