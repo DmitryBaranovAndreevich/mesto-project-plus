@@ -1,6 +1,6 @@
-import { IUser } from "../interface/user";
-import { Schema, model } from "mongoose";
-import validator from "validator";
+import { Schema, model } from 'mongoose';
+import validator from 'validator';
+import { IUser } from '../interface/user';
 
 const userShema = new Schema({
   name: {
@@ -8,23 +8,23 @@ const userShema = new Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
-    default: "Жак-Ив Кусто",
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     required: true,
     minlength: 2,
     maxlength: 200,
-    default: "Исследователь",
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
     validate: {
       validator: (v: string) => validator.isURL(v),
-      message: "Некорректный URL",
+      message: 'Некорректный URL',
     },
     default:
-      "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png",
+      'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
     type: String,
@@ -32,7 +32,7 @@ const userShema = new Schema({
     unique: true,
     validate: {
       validator: (v: string) => validator.isEmail(v),
-      message: "Некорректный адрес почты",
+      message: 'Некорректный адрес почты',
     },
   },
   password: {
@@ -42,4 +42,4 @@ const userShema = new Schema({
   },
 });
 
-export default model<IUser>("user", userShema);
+export default model<IUser>('user', userShema);

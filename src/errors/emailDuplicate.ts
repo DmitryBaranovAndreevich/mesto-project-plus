@@ -1,7 +1,10 @@
-export class EmailDuplicate extends Error {
+class EmailDuplicate extends Error {
   statusCode;
+
   constructor() {
-    super("Такой адрес электронной почты уже используется");
+    super('Такой адрес электронной почты уже используется');
     this.statusCode = 409;
   }
 }
+
+export default EmailDuplicate;

@@ -1,6 +1,6 @@
-import { ICard } from "../interface/card";
-import { Schema, model } from "mongoose";
-import validator from "validator";
+import { Schema, model } from 'mongoose';
+import validator from 'validator';
+import { ICard } from '../interface/card';
 
 const cardShema = new Schema({
   name: {
@@ -13,19 +13,19 @@ const cardShema = new Schema({
     type: String,
     validate: {
       validator: (v: string) => validator.isURL(v),
-      message: "Некорректный URL",
+      message: 'Некорректный URL',
     },
     required: true,
   },
   owner: {
     type: Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
     required: true,
   },
   likes: [
     {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: 'user',
       default: [],
     },
   ],
@@ -35,4 +35,4 @@ const cardShema = new Schema({
   },
 });
 
-export default model<ICard>("card", cardShema);
+export default model<ICard>('card', cardShema);

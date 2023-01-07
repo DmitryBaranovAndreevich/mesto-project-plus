@@ -1,4 +1,5 @@
-import express from "express";
+/* eslint-disable */
+import express from 'express';
 
 declare global {
   namespace Express {
@@ -7,3 +8,4 @@ declare global {
     }
   }
 }
+/* eslint-enable */
