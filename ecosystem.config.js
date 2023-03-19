@@ -4,7 +4,7 @@ const {
   DEPLOY_USER,
   DEPLOY_HOST,
   DEPLOY_PATH,
-  DEPLOY_REF = "origin/master",
+  DEPLOY_REF = "origin/main",
 } = process.env;
 
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
       user: DEPLOY_USER,
       host: DEPLOY_HOST,
       ref: DEPLOY_REF,
-      repo: "https://github.com/Username/repository.git",
+      repo: "https://github.com/DmitryBaranovAndreevich/mesto-project-plus.git",
       path: DEPLOY_PATH,
       "pre-deploy": `scp ./*.env ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}`,
       "post-deploy": "npm i && npm run build",
